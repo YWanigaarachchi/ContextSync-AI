@@ -26,9 +26,9 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL: str = "text-embedding-004"
     EMBEDDING_DIMENSIONS: int = 768
 
-    # === ChromaDB ===
-    CHROMA_PERSIST_DIR: str = str(Path(__file__).parent.parent.parent / "data" / "chroma")
-    CHROMA_COLLECTION_NAME: str = "contextsync_documents"
+    # === Qdrant ===
+    QDRANT_PERSIST_DIR: str = str(Path(__file__).parent.parent.parent / "data" / "qdrant")
+    QDRANT_COLLECTION_NAME: str = "contextsync_documents"
 
     # === File Storage ===
     UPLOAD_DIR: str = str(Path(__file__).parent.parent.parent / "data" / "uploads")
@@ -60,7 +60,7 @@ class Settings(BaseSettings):
 
     def ensure_directories(self) -> None:
         """Create required directories if they don't exist."""
-        os.makedirs(self.CHROMA_PERSIST_DIR, exist_ok=True)
+        os.makedirs(self.QDRANT_PERSIST_DIR, exist_ok=True)
         os.makedirs(self.UPLOAD_DIR, exist_ok=True)
         os.makedirs(Path(self.DATABASE_URL.replace("sqlite+aiosqlite:///", "")).parent, exist_ok=True)
 
