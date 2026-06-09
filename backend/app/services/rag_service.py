@@ -153,20 +153,24 @@ async def generate_response(
     ))
 
     # Step 4: Generate with Gemini
-    response = client.models.generate_content(
-        model=settings.GEMINI_MODEL,
-        contents=contents,
-        config=types.GenerateContentConfig(
-            system_instruction=prompt_data["system"],
-            temperature=0.3,
-            max_output_tokens=2048,
-        ),
-    )
+    try:
+        response = client.models.generate_content(
+            model=settings.GEMINI_MODEL,
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=prompt_data["system"],
+                temperature=0.3,
+                max_output_tokens=2048,
+            ),
+        )
+        content_text = response.text
+    except Exception as e:
+        content_text = f"**API Error**: Failed to get response from AI. Please check your Gemini API key in `backend/.env`. (Details: {str(e)})"
 
     elapsed_ms = round((time.time() - start_time) * 1000, 2)
 
     return {
-        "content": response.text,
+        "content": content_text,
         "sources": context_chunks,
         "response_time_ms": elapsed_ms,
     }
@@ -211,24 +215,33 @@ async def generate_response_stream(
 
     # Step 4: Stream from Gemini
     full_response = ""
-    response_stream = client.models.generate_content_stream(
-        model=settings.GEMINI_MODEL,
-        contents=contents,
-        config=types.GenerateContentConfig(
-            system_instruction=prompt_data["system"],
-            temperature=0.3,
-            max_output_tokens=2048,
-        ),
-    )
+    try:
+        response_stream = client.models.generate_content_stream(
+            model=settings.GEMINI_MODEL,
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=prompt_data["system"],
+                temperature=0.3,
+                max_output_tokens=2048,
+            ),
+        )
 
-    for chunk in response_stream:
-        if chunk.text:
-            full_response += chunk.text
-            token_data = json.dumps({
-                "type": "token",
-                "data": chunk.text,
-            })
-            yield f"data: {token_data}\n\n"
+        for chunk in response_stream:
+            if chunk.text:
+                full_response += chunk.text
+                token_data = json.dumps({
+                    "type": "token",
+                    "data": chunk.text,
+                })
+                yield f"data: {token_data}\n\n"
+    except Exception as e:
+        error_msg = f"\n\n**API Error**: Failed to get response from AI. Please check your Gemini API key in `backend/.env`. (Details: {str(e)})"
+        full_response += error_msg
+        token_data = json.dumps({
+            "type": "token",
+            "data": error_msg,
+        })
+        yield f"data: {token_data}\n\n"
 
     # Yield completion signal
     elapsed_ms = round((time.time() - start_time) * 1000, 2)
