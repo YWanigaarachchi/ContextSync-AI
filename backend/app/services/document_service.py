@@ -5,15 +5,22 @@ Supports PDF, DOCX, TXT, Web URLs, and code files.
 
 import os
 import uuid
+# pyrefly: ignore [missing-import]
 import httpx
 from pathlib import Path
 from typing import Optional
 
+# pyrefly: ignore [missing-import]
 from qdrant_client import QdrantClient
+# pyrefly: ignore [missing-import]
 from qdrant_client.models import VectorParams, Distance, PointStruct, Filter, FieldCondition, MatchValue
+# pyrefly: ignore [missing-import]
 from PyPDF2 import PdfReader
+# pyrefly: ignore [missing-import]
 from docx import Document as DocxDocument
+# pyrefly: ignore [missing-import]
 from bs4 import BeautifulSoup
+# pyrefly: ignore [missing-import]
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from app.core.config import settings

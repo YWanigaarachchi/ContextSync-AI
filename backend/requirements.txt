@@ -22,7 +22,8 @@ langchain-text-splitters==0.3.8
 
 # Authentication
 python-jose[cryptography]==3.5.0
-passlib[bcrypt]==1.7.4
+passlib==1.7.4
+bcrypt==3.2.0
 
 # Database
 sqlalchemy==2.0.41

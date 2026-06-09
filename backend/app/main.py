@@ -72,3 +72,10 @@ async def root():
         "docs": "/docs",
         "health": "/health",
     }
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    # pyrefly: ignore [missing-import]
+    from fastapi.responses import Response
+    return Response(content=b"", media_type="image/x-icon")
