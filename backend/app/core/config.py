@@ -3,6 +3,7 @@ Centralized application configuration using Pydantic Settings.
 Loads from environment variables and .env file.
 """
 
+# pyrefly: ignore [missing-import]
 from pydantic_settings import BaseSettings
 from pathlib import Path
 import os
