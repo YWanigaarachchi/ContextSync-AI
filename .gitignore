@@ -1,0 +1,52 @@
+# ===========================
+# ContextSync-AI .gitignore
+# ===========================
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# === Node.js ===
+node_modules/
+.next/
+out/
+.turbo/
+
+# === Environment ===
+.env
+.env.local
+.env.*.local
+
+# === Data (generated at runtime) ===
+backend/data/
+*.db
+*.sqlite3
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Logs ===
+*.log
+npm-debug.log*
+
+# === Coverage ===
+coverage/
+htmlcov/
+.pytest_cache/
