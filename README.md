@@ -17,9 +17,7 @@ An intelligent **Retrieval-Augmented Generation (RAG)** system that seamlessly c
                                        │
                        ┌───────────────┼───────────────┐
                        │               │               │
-                  ┌────▾────┐   ┌──────▾─────┐  ┌─────▾─────┐
-                  │ ChromaDB │   │   SQLite   │  │   File    │
-                  │ (Vectors)│   │ (Metadata) │  │  Storage  │
+                  │ Qdrant   │   │   SQLite   │  │   File    │
                   └──────────┘   └────────────┘  └───────────┘
 ```
 
@@ -41,7 +39,7 @@ Before running the application, make sure to configure the backend environment v
 | `GEMINI_API_KEY` | **Required**. Your Google Gemini API Key | `AIzaSy...` |
 | `SECRET_KEY` | JWT secret key | `your-super-secret-jwt-key` |
 | `DATABASE_URL` | SQLite database URI | `sqlite+aiosqlite:///./data/contextsync.db` |
-| `CHROMA_PERSIST_DIR` | ChromaDB storage path | `./data/chroma_db` |
+| `QDRANT_PERSIST_DIR` | Qdrant vector storage path | `./data/qdrant` |
 | `UPLOAD_DIR` | File upload storage path | `./data/uploads` |
 | `CORS_ORIGINS` | Allowed frontend origins | `http://localhost:3000` |
 
@@ -70,8 +68,8 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env and add your GEMINI_API_KEY
 
-# Start the server
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# Start the server (DO NOT use --reload as it causes Qdrant local database locks on Windows)
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 ### 2. Frontend Setup
@@ -117,7 +115,7 @@ npm run dev
 | **Backend** | FastAPI, Python 3.11+ |
 | **LLM** | Google Gemini 2.0 Flash |
 | **Embeddings** | Gemini text-embedding-004 |
-| **Vector DB** | ChromaDB |
+| **Vector DB** | Qdrant (Local) |
 | **Database** | SQLite (async SQLAlchemy) |
 | **Auth** | JWT (python-jose + bcrypt) |
 
@@ -132,7 +130,7 @@ ContextSync-AI/
 │   │   ├── models/              # Pydantic schemas & SQLAlchemy models
 │   │   ├── services/            # Business logic (Auth, RAG, Embeddings)
 │   │   └── routers/             # API Endpoints
-│   ├── data/                    # Runtime data (SQLite, Chroma, Uploads)
+│   ├── data/                    # Runtime data (SQLite, Qdrant, Uploads)
 │   ├── requirements.txt
 │   └── .env
 └── frontend/
@@ -146,8 +144,10 @@ ContextSync-AI/
 
 ## 🔧 Troubleshooting
 
+- **Cannot find module `google.genai` or `qdrant_client` in Backend**: If your IDE (VS Code / Cursor) shows imports as missing in the backend, ensure you have selected the virtual environment interpreter (`backend/venv/Scripts/python.exe`). A `.vscode/settings.json` has been provided to fix this automatically.
 - **`Cannot find module` in Frontend**: If the IDE shows a TypeScript error but the code builds fine (`npm run build`), try restarting your TypeScript language server (`Ctrl+Shift+P` -> `TypeScript: Restart TS Server` in VS Code).
 - **Backend Database Errors**: If you encounter SQLite schema errors during development, you can safely delete the `backend/data/contextsync.db` file to reset the database. It will auto-recreate on next startup.
+- **Qdrant Storage Lock Error**: If you get a `RuntimeError: Storage folder is already accessed` when starting the backend, make sure you don't have multiple backend instances running. Avoid using the `--reload` flag with uvicorn.
 
 ## 📜 License
 
