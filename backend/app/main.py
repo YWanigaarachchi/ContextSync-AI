@@ -4,7 +4,9 @@ Intelligent Retrieval-Augmented Generation system.
 """
 
 from contextlib import asynccontextmanager
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI
+# pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
@@ -19,12 +21,12 @@ async def lifespan(app: FastAPI):
     # Startup
     settings.ensure_directories()
     await init_db()
-    print(f"🚀 {settings.APP_NAME} v{settings.APP_VERSION} started successfully!")
-    print(f"📁 ChromaDB: {settings.CHROMA_PERSIST_DIR}")
-    print(f"📁 Uploads: {settings.UPLOAD_DIR}")
+    print(f"Server: {settings.APP_NAME} v{settings.APP_VERSION} started successfully!")
+    print(f"Database: {settings.QDRANT_PERSIST_DIR}")
+    print(f"Uploads: {settings.UPLOAD_DIR}")
     yield
     # Shutdown
-    print(f"👋 {settings.APP_NAME} shutting down...")
+    print(f"Server: {settings.APP_NAME} shutting down...")
 
 
 # Create FastAPI application
